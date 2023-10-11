@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import org.hibernate.sql.results.LoadingLogger_.logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -53,12 +54,16 @@ public class UsuarioController {
         return ResponseEntity.ok().build();
     }
 
-    // @PutMapping (path = {"/usuarios/{id}"})
-    // public ResponseEntity<UsuarioEntity> editar(@PathVariable long id, @RequestBody UsuarioEntity updated)
-    // {
-    //     Optional<UsuarioEntity> usuario = usuarioRepository.findById(id);
-    //     usuario.set
-    //     UsuarioEntity user = usuarioRepository.save(updated);
-    //     return new ResponseEntity<>(user, HttpStatus.OK);
-    // }
+    @PutMapping (value = "/usuarios/{id}")
+    public ResponseEntity<UsuarioEntity> editar(@PathVariable long id, @RequestBody UsuarioEntity updated)
+    {
+        UsuarioEntity usuario = usuarioRepository.findById(id).get();
+        
+        usuario.setNome(updated.nome);
+        usuario.setEmail(updated.email);
+        usuario.setPassword(updated.password);
+        
+        usuarioRepository.save(usuario);
+        return ResponseEntity.ok().build();
+    }
 }
