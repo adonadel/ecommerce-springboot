@@ -1,5 +1,7 @@
 package com.example.ecommerce.ecommerce.model;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -11,7 +13,7 @@ import lombok.Setter;
 @Setter
 @Getter
 @Entity
-@Table(name = "usuario")
+@Table(name = "usuarios")
 public class UsuarioEntity {
     
     @Id
@@ -23,4 +25,10 @@ public class UsuarioEntity {
     public String email;
 
     public String password;
+
+    public LocalDateTime createdAt;
+
+    public LocalDateTime updatedAt;
+
+    public LocalDateTime deletedAt;
 }

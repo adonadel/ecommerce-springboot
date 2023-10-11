@@ -1,11 +1,19 @@
 package com.example.ecommerce.ecommerce.controller;
 
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+
+import org.hibernate.sql.results.LoadingLogger_.logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -18,16 +26,44 @@ public class UsuarioController {
     @Autowired
     UsuarioRepository usuarioRepository;
 
-    @GetMapping(value="/")
-    public void get() 
+    @GetMapping(value="/usuarios/listar")
+    public List<UsuarioEntity> getMethodName() 
     {
-
+        return usuarioRepository.findAll();
     }
 
-    @PostMapping (value="/usuario")
+    @GetMapping(path={"/usuarios/{id}"})
+    public UsuarioEntity getUser(@PathVariable long id) 
+    {
+        return usuarioRepository.findById(id).get();
+    }
+
+    @PostMapping (value="/usuarios")
     public ResponseEntity<UsuarioEntity> salvar(@RequestBody UsuarioEntity usuario)
     {
-        UsuarioEntity _user = usuarioRepository.save(usuario);
-        return new ResponseEntity<>(_user, HttpStatus.CREATED);
+        usuario.createdAt = LocalDateTime.now();
+        usuario.updatedAt = LocalDateTime.now();
+        UsuarioEntity user = usuarioRepository.save(usuario);
+        return new ResponseEntity<>(user, HttpStatus.CREATED);
+    }
+
+    @DeleteMapping (path = {"/usuarios/{id}"})
+    public ResponseEntity <?> excluir(@PathVariable long id)
+    {
+        usuarioRepository.deleteById(id);
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping (value = "/usuarios/{id}")
+    public ResponseEntity<UsuarioEntity> editar(@PathVariable long id, @RequestBody UsuarioEntity updated)
+    {
+        UsuarioEntity usuario = usuarioRepository.findById(id).get();
+        
+        usuario.setNome(updated.nome);
+        usuario.setEmail(updated.email);
+        usuario.setPassword(updated.password);
+        
+        usuarioRepository.save(usuario);
+        return ResponseEntity.ok().build();
     }
 }
