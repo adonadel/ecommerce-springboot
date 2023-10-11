@@ -25,19 +25,19 @@ public class UsuarioController {
     @Autowired
     UsuarioRepository usuarioRepository;
 
-    @GetMapping(value="/usuario/listar")
+    @GetMapping(value="/usuarios/listar")
     public List<UsuarioEntity> getMethodName() 
     {
         return usuarioRepository.findAll();
     }
 
-    @GetMapping(path={"/usuario/{id}"})
+    @GetMapping(path={"/usuarios/{id}"})
     public UsuarioEntity getUser(@PathVariable long id) 
     {
         return usuarioRepository.findById(id).get();
     }
 
-    @PostMapping (value="/usuario")
+    @PostMapping (value="/usuarios")
     public ResponseEntity<UsuarioEntity> salvar(@RequestBody UsuarioEntity usuario)
     {
         usuario.createdAt = LocalDateTime.now();
@@ -46,14 +46,14 @@ public class UsuarioController {
         return new ResponseEntity<>(user, HttpStatus.CREATED);
     }
 
-    @DeleteMapping (path = {"/usuario/{id}"})
+    @DeleteMapping (path = {"/usuarios/{id}"})
     public ResponseEntity <?> excluir(@PathVariable long id)
     {
         usuarioRepository.deleteById(id);
         return ResponseEntity.ok().build();
     }
 
-    // @PutMapping (path = {"/usuario/{id}"})
+    // @PutMapping (path = {"/usuarios/{id}"})
     // public ResponseEntity<UsuarioEntity> editar(@PathVariable long id, @RequestBody UsuarioEntity updated)
     // {
     //     Optional<UsuarioEntity> usuario = usuarioRepository.findById(id);
