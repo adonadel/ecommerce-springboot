@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.ecommerce.ecommerce.model.RegisterDTO;
 import com.example.ecommerce.ecommerce.model.UsuarioEntity;
 import com.example.ecommerce.ecommerce.repository.UsuarioRepository;
 
@@ -36,12 +38,19 @@ public class UsuarioController {
     }
 
     @PostMapping (value="/usuarios")
-    public ResponseEntity<UsuarioEntity> salvar(@RequestBody UsuarioEntity usuario)
+    public ResponseEntity<UsuarioEntity> salvar(@RequestBody RegisterDTO usuario)
     {
-        usuario.createdAt = LocalDateTime.now();
-        usuario.updatedAt = LocalDateTime.now();
-        UsuarioEntity user = usuarioRepository.save(usuario);
-        return new ResponseEntity<>(user, HttpStatus.CREATED);
+        if (this.usuarioRepository.findByEmail(usuario.email()) != null) return ResponseEntity.badRequest().build();
+
+        String encryptedPassword = new BCryptPasswordEncoder().encode(usuario.password());
+        UsuarioEntity new_user = new UsuarioEntity(usuario.nome(), usuario.email(),encryptedPassword,usuario.role());
+
+        this.usuarioRepository.save(new_user);
+        return new ResponseEntity<>(new_user, HttpStatus.CREATED);
+        // usuario.createdAt = LocalDateTime.now();
+        // usuario.updatedAt = LocalDateTime.now();
+        // UsuarioEntity user = usuarioRepository.save(usuario);
+        // return new ResponseEntity<>(user, HttpStatus.CREATED);
     }
 
     @DeleteMapping (path = {"/usuarios/{id}"})
