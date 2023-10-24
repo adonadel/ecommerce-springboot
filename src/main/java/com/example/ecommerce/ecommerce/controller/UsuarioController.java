@@ -45,10 +45,10 @@ public class UsuarioController {
         String encryptedPassword = new BCryptPasswordEncoder().encode(usuario.password());
         UsuarioEntity new_user = new UsuarioEntity(usuario.nome(), usuario.email(),encryptedPassword,usuario.role());
 
+        new_user.createdAt = LocalDateTime.now();
+        new_user.updatedAt = LocalDateTime.now();
         this.usuarioRepository.save(new_user);
         return new ResponseEntity<>(new_user, HttpStatus.CREATED);
-        // usuario.createdAt = LocalDateTime.now();
-        // usuario.updatedAt = LocalDateTime.now();
         // UsuarioEntity user = usuarioRepository.save(usuario);
         // return new ResponseEntity<>(user, HttpStatus.CREATED);
     }
