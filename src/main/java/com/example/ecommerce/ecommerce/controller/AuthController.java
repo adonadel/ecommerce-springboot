@@ -33,18 +33,20 @@ public class AuthController {
 
     @PostMapping(value="/auth")
     public ResponseEntity login(@RequestBody @Valid AuthenticationDTO data){
-        
-        var usernamePassword = new UsernamePasswordAuthenticationToken(data.email(), data.password());
-        var auth = this.auth_manager.authenticate(usernamePassword);
-        var token = token_service.generateToken((UsuarioEntity) auth.getPrincipal());
-
-        return ResponseEntity.ok(new LoginResponseDTO(token));
+        try{
+            var usernamePassword = new UsernamePasswordAuthenticationToken(data.email(), data.password());
+            var auth = this.auth_manager.authenticate(usernamePassword);
+            var token = token_service.generateToken((UsuarioEntity) auth.getPrincipal());
+            return ResponseEntity.ok(new LoginResponseDTO(token));
+        }catch(Exception e){
+            return ResponseEntity.ok().build();
+        }
     }
     
-    @GetMapping(value="/auth/verifytoken")
-    public boolean verifyToken(@RequestParam String token){     
+    @GetMapping(value="/auth/verifytoken/{token}")
+    public ResponseEntity verifyToken(@RequestParam String token){
         String _token = token_service.validateToken(token);
-        return _token == "" ? false : true;
+        return ResponseEntity.ok().body((_token == "" ? false : true));
     }
     
 }
